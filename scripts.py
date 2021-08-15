@@ -45,11 +45,18 @@ def check(tools: Iterable[str] = ("black", "mypy", "pylint")) -> None:
         static_analysis_tools[tool]()
 
 
+def test(options: Iterable[str] = ()) -> None:
+    """Run all pytest."""
+
+    _run(f"pytest {' '.join(options)}")
+
+
 COMMANDS = {
     "check": check,
     "black": run_black,
     "pylint": run_pylint,
     "mypy": run_mypy,
+    "test": test,
 }
 
 if __name__ == "__main__":

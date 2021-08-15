@@ -62,6 +62,8 @@ class Event:
 
     def fire(self):
         """Fire this event by sending it to all registered handlers."""
+
+        self.canceled = False
         for handler in self.handlers:
             handler(self)
 

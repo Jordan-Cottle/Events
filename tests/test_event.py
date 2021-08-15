@@ -102,7 +102,7 @@ def clear_event_handlers():
     Event._handlers.clear()
 
 
-def test_base_event(event_handler):
+def test_base_event(event_handler: EventHandler):
     """Test base class for events can be regsitered and fired."""
 
     event = Event()
@@ -149,7 +149,7 @@ def test_event_handler_decorator():
     assert event.handlers == []
 
 
-def test_subclassing_event(event_handler, custom_handler):
+def test_subclassing_event(event_handler: EventHandler, custom_handler: CustomHandler):
     """Ensure subclasses of Event behave as expected."""
 
     custom_event = CustomEvent(CustomEvent.TEST_MESSAGE)
@@ -176,7 +176,7 @@ def test_subclassing_event(event_handler, custom_handler):
     assert custom_handler.events_processed == [custom_event, second_custom_event]
 
 
-def test_canceling_event(event_handler, custom_handler):
+def test_canceling_event(event_handler: EventHandler, custom_handler: CustomHandler):
     """Verify that canceling an event stops less-specific handlers from being called"""
 
     Event.add_handler(event_handler)
@@ -190,6 +190,30 @@ def test_canceling_event(event_handler, custom_handler):
 
     assert custom_handler.call_count == 1
     assert custom_handler.last_event is custom_event
+
+    assert event_handler.call_count == 0
+    assert event_handler.last_event is None
+
+
+def test_repeat_fire_of_canceled_events(
+    event_handler: EventHandler, custom_handler: CustomHandler
+):
+    """Verify that re-firing a canceled event still works."""
+
+    Event.add_handler(event_handler)
+    CustomEvent.add_handler(custom_handler)
+
+    custom_event = CustomEvent(CustomEvent.TEST_MESSAGE, trigger_cancel=True)
+
+    custom_event.fire()
+    assert custom_event.canceled
+
+    assert custom_handler.call_count == 1
+    assert custom_handler.last_event is custom_event
+
+    custom_event.fire()
+    assert custom_handler.call_count == 2
+    assert custom_handler.events_processed == [custom_event, custom_event]
 
     assert event_handler.call_count == 0
     assert event_handler.last_event is None

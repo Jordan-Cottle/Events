@@ -34,3 +34,9 @@ testpaths = [
 disable = """
 logging-fstring-interpolation,
 """
+
+[tool.pylint.basic]
+
+good-names = [
+    "CustomEvent"
+]

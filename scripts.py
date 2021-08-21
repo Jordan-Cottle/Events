@@ -1,12 +1,17 @@
 #! /usr/bin/env python
 """ Scripts for development """
 
+import os
 from typing import Iterable
 from subprocess import run
 
 from argparse import ArgumentParser
 
 SOURCE_CODE_LOCATIONS = " ".join(["py_events", "tests", __file__])
+
+assert (
+    os.getenv("VIRTUAL_ENV") is not None
+), "You really should be using a virtual environment"
 
 
 def _run(command):

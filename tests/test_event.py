@@ -3,6 +3,9 @@
 import logging
 from typing import List, Union
 from unittest.mock import patch
+from uuid import UUID  # pylint: disable=unused-import
+
+# UUID is needed when the repr test evaluates the Event repr
 
 import pytest
 
@@ -124,6 +127,16 @@ def test_base_event(event_handler: EventHandler):
     event.fire()
     assert event_handler.last_event is event
     assert event_handler.call_count == 1
+
+
+def test_event_repr():
+    """Base event should be reconstructible using it's repr for easy development."""
+
+    event = Event()
+
+    # The use of eval here is relevant to the repr convention
+    # pylint: disable=eval-used
+    assert eval(repr(event)).__dict__ == event.__dict__
 
 
 def test_event_handler_decorator():

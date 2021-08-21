@@ -80,4 +80,4 @@ class Event:
         return f"{type_of(self)} {self.uuid}"
 
     def __repr__(self) -> str:
-        return f"{type_of(self)}(uuid={self.uuid})"
+        return f"{type_of(self)}(uuid={self.uuid!r})"

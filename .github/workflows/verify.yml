@@ -1,0 +1,30 @@
+name: Test application
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Poetry Install
+      uses: knowsuchagency/poetry-install@v2
+      with:
+        create-virtualenv: true
+    - name: Static analysis
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        poetry run python scripts.py check
+    - name: Run tests
+      run: |
+        poetry run python scripts.py test

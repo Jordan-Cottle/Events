@@ -11,7 +11,7 @@ SOURCE_CODE_LOCATIONS = " ".join(["py_events", "tests", __file__])
 
 def _run(command):
     print(command)
-    return run(command, check=True)
+    return run(command, check=True, shell=True)
 
 
 def run_black(options: Iterable[str] = ("--check", "--diff")) -> None:

@@ -1,0 +1,15 @@
+[run]
+source = py_events, tests
+
+[report]
+
+fail_under = 100
+
+include = py_events/*
+
+show_missing = true
+
+sort = -miss
+
+exclude_lines =
+    if __name__ == .__main__.

@@ -3,7 +3,12 @@ name = "py_events"
 version = "0.1.0"
 description = "Basic event system for python"
 authors = ["Jordan Cottle <jordancottle622@gmail.com>"]
+keywords = ["event"]
+readme = "README.md"
 license = "MIT"
+homepage = "https://github.com/Jordan-Cottle/Events"
+repository = "https://github.com/Jordan-Cottle/Events"
+include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.6.2"

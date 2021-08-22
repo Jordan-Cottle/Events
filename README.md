@@ -11,6 +11,12 @@ One common use case would be in implementing a statistics tracker for a game. Yo
 
 Organized properly, using events can allow for a much greater separation of concerns and simplify otherwise complex logic dramatically.
 
+### Installation
+
+Activate your virtual environment if you are using one (and you should be), then execute:
+```
+python -m pip install py-events
+```
 
 ### Define your event
 

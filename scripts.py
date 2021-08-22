@@ -76,10 +76,14 @@ def check_version() -> None:
     current_version = _run("poetry version -s")
     print(f"Latest version: {current_version}")
 
-    if "GITHUB_ACTIONS" in os.environ:
-        # This enables the git describe command below to work since by default the information
-        # required by `git describe` is not checkout out within the actions environment
+    # This enables the git describe command below to work since by default the information
+    # required by `git describe` is not checkout out within the actions environment
+    try:
         _run("git fetch --prune --unshallow")
+    except CalledProcessError as error:
+        # If we didn't need this, then ignore the error
+        if error.returncode != 128:
+            raise
 
     git_tag = _run("git describe --abbrev=0")
     if git_tag != f"v{current_version}":

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py_events"
-version = "0.1.0"
+version = "0.1.1"
 description = "Basic event system for python"
 authors = ["Jordan Cottle <jordancottle622@gmail.com>"]
 keywords = ["event"]

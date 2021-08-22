@@ -23,7 +23,6 @@ jobs:
         create-virtualenv: true
     - name: Static analysis
       run: |
-        # stop the build if there are Python syntax errors or undefined names
         poetry run python scripts.py check
     - name: Run tests
       run: |

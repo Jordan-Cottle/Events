@@ -2,9 +2,10 @@ name: Test application
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - "v*"
+    branches:
+      - main
 
 jobs:
   test:
@@ -21,13 +22,14 @@ jobs:
       uses: knowsuchagency/poetry-install@v2
       with:
         create-virtualenv: true
-    - name: Static analysis
+    - name: Build
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        poetry run python scripts.py check
-    - name: Run tests
-      run: |
-        poetry run python scripts.py test
+        poetry build
     - name: Check version
       run: |
         poetry run python scripts.py check_version
+    - name: Publish
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        poetry run python scripts.py publish

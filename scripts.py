@@ -3,6 +3,7 @@
 
 import json
 import os
+import re
 from argparse import ArgumentParser
 from http import HTTPStatus
 from subprocess import PIPE, CalledProcessError, run
@@ -70,11 +71,19 @@ def test(options: Iterable[str] = ()) -> None:
     _run(f"pytest {' '.join(options)}")
 
 
-def check_version() -> None:
-    """Assert that the latest git tag matches the poetry version."""
+def get_git_tag():
+    """Get the git tag for this commit.
 
-    current_version = _run("poetry version -s")
-    print(f"Latest version: {current_version}")
+    It's a bit of a mess with all of the possible different ways actions can check out the project.
+    """
+
+    git_ref = os.getenv("GITHUB_REF")
+
+    # Use passed in git reference
+    if git_ref is not None:
+        git_tag = git_ref.split("/")[-1]
+        if re.match(r"v\d+.\d+.\d+", git_tag):
+            return git_tag
 
     # This enables the git describe command below to work since by default the information
     # required by `git describe` is not checkout out within the actions environment
@@ -85,7 +94,16 @@ def check_version() -> None:
         if error.returncode != 128:
             raise
 
-    git_tag = _run("git describe --abbrev=0")
+    return _run("git describe --abbrev=0")
+
+
+def check_version() -> None:
+    """Assert that the latest git tag matches the poetry version."""
+
+    current_version = _run("poetry version -s")
+    print(f"Latest version: {current_version}")
+
+    git_tag = get_git_tag()
     if git_tag != f"v{current_version}":
         raise ValueError(
             f"Git tag ({git_tag}) does not match poetry version ({current_version})"
@@ -100,9 +118,13 @@ def publish() -> None:
 
     check_version()
 
-    scheme, net_location, *_ = urlparse(_run(f"poetry config repositories.{PYPI}.url"))
-
-    pypi_host = f"{scheme}://{net_location}"
+    if PYPI != "pypi":
+        scheme, net_location, *_ = urlparse(
+            _run(f"poetry config repositories.{PYPI}.url")
+        )
+        pypi_host = f"{scheme}://{net_location}"
+    else:
+        pypi_host = "https://pypi.org/"
 
     try:
         with urlopen(f"{pypi_host}/pypi/{PROJECT_NAME}/json") as response:
@@ -127,9 +149,9 @@ def publish() -> None:
 
     print(f"Newer version of {PROJECT_NAME} detected.")
     if PYPI != "pypi":
-        _run(f"poetry publish -r {PYPI}")
+        _run(f"poetry publish -n -r {PYPI}")
     else:
-        _run("poetry publish")
+        _run("poetry publish -n")
 
 
 COMMANDS: Mapping[str, Callable] = {
